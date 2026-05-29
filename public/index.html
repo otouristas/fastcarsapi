@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fast Motor Rental Naxos — Live Availability Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --brand: #1d4ed8;
+        --brand-soft: #dbeafe;
+        --accent: #0ea5e9;
+        --ok: #059669;
+        --ok-soft: #d1fae5;
+        --warn: #dc2626;
+        --warn-soft: #fee2e2;
+        --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "DM Sans", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 28%),
+          radial-gradient(circle at top right, rgba(29, 78, 216, 0.1), transparent 24%),
+          var(--bg);
+        min-height: 100vh;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 64px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.15);
+        animation: pulse 1.8s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.15);
+          opacity: 0.75;
+        }
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-size: clamp(2.4rem, 5vw, 4rem);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: calc(var(--radius) + 4px);
+        box-shadow: var(--shadow);
+      }
+
+      .search-panel {
+        padding: 22px;
+        margin-bottom: 22px;
+      }
+
+      .search-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+        gap: 14px;
+        align-items: end;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      input,
+      button {
+        font: inherit;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 15px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+      }
+
+      input:focus {
+        outline: 2px solid rgba(29, 78, 216, 0.18);
+        border-color: #93c5fd;
+      }
+
+      .search-btn {
+        border: 0;
+        border-radius: 14px;
+        padding: 15px 22px;
+        background: linear-gradient(135deg, var(--brand), var(--accent));
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        min-width: 148px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 10px 24px rgba(29, 78, 216, 0.25);
+      }
+
+      .search-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .search-btn:disabled {
+        opacity: 0.7;
+        cursor: wait;
+        transform: none;
+      }
+
+      .meta-bar {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+      }
+
+      .meta-card {
+        padding: 18px 20px;
+      }
+
+      .meta-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .meta-value {
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .meta-sub {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .results-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .source-pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--brand-soft);
+        color: var(--brand);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .vehicle-card {
+        padding: 20px;
+        display: grid;
+        gap: 16px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .vehicle-card.unavailable-card {
+        opacity: 0.72;
+      }
+
+      .vehicle-card.unavailable-card .price-main,
+      .vehicle-card.unavailable-card .price-total strong {
+        color: var(--muted);
+      }
+
+      .vehicle-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: start;
+      }
+
+      .vehicle-name {
+        margin: 0;
+        font-size: 1.15rem;
+        line-height: 1.25;
+      }
+
+      .vehicle-meta {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-top: 6px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .badge.ok {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+
+      .badge.no {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+
+      .badge.code {
+        background: #eef2ff;
+        color: #4338ca;
+      }
+
+      .specs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .spec {
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .pricing {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 12px;
+        padding-top: 8px;
+        border-top: 1px solid var(--line);
+      }
+
+      .price-main {
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .price-main span {
+        font-size: 0.95rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .price-total {
+        text-align: right;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .price-total strong {
+        display: block;
+        color: var(--ink);
+        font-size: 1rem;
+        margin-top: 4px;
+      }
+
+      .state-box {
+        padding: 28px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .state-box.error {
+        color: var(--warn);
+        background: var(--warn-soft);
+        border: 1px solid #fecaca;
+      }
+
+      .skeleton-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .skeleton {
+        height: 220px;
+        border-radius: var(--radius);
+        background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.2s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .footer-note {
+        margin-top: 24px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 960px) {
+        .search-grid,
+        .meta-bar {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .search-btn {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .search-grid,
+        .meta-bar {
+          grid-template-columns: 1fr;
+        }
+
+        .page {
+          width: min(100% - 20px, 1180px);
+          padding-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div class="eyebrow">
+          <span class="live-dot"></span>
+          Live KosmikBooker → Discover Cars Bridge
+        </div>
+        <h1>Fast Motor Rental Naxos</h1>
+        <p class="subtitle">
+          Showcase demo for live fleet availability and pricing. Search by pickup
+          and drop-off dates to pull real-time inventory from KosmikBooker and
+          map it to OTA-ready vehicle class codes.
+        </p>
+      </header>
+
+      <section class="panel search-panel">
+        <form id="search-form" class="search-grid">
+          <label>
+            Pickup date
+            <input type="date" id="pickupDate" required />
+          </label>
+          <label>
+            Drop-off date
+            <input type="date" id="dropoffDate" required />
+          </label>
+          <label>
+            Pickup time
+            <input type="time" id="pickupTime" value="10:00" required />
+          </label>
+          <label>
+            Drop-off time
+            <input type="time" id="dropoffTime" value="10:00" required />
+          </label>
+          <button class="search-btn" type="submit" id="search-btn">
+            Search live fleet
+          </button>
+        </form>
+      </section>
+
+      <section class="meta-bar" id="meta-bar" hidden>
+        <div class="panel meta-card">
+          <div class="meta-label">Available now</div>
+          <div class="meta-value" id="stat-available">—</div>
+          <div class="meta-sub" id="stat-available-sub">vehicle types bookable for these dates</div>
+        </div>
+        <div class="panel meta-card">
+          <div class="meta-label">Unavailable</div>
+          <div class="meta-value" id="stat-unavailable">—</div>
+          <div class="meta-sub">blocked or fully booked</div>
+        </div>
+        <div class="panel meta-card">
+          <div class="meta-label">Location</div>
+          <div class="meta-value" id="stat-location">JNX</div>
+          <div class="meta-sub">Naxos, Greece</div>
+        </div>
+        <div class="panel meta-card">
+          <div class="meta-label">Rental period</div>
+          <div class="meta-value" id="stat-period">—</div>
+          <div class="meta-sub" id="stat-times">—</div>
+        </div>
+        <div class="panel meta-card">
+          <div class="meta-label">Last updated</div>
+          <div class="meta-value" id="stat-updated">—</div>
+          <div class="meta-sub" id="stat-source">—</div>
+        </div>
+      </section>
+
+      <div class="results-header">
+        <h2>Fleet results</h2>
+        <span class="source-pill" id="results-source" hidden></span>
+      </div>
+
+      <section id="results"></section>
+
+      <p class="footer-note">
+        Demo endpoint:
+        <code>/api/availability?pickupDate=YYYY-MM-DD&amp;dropoffDate=YYYY-MM-DD</code>.
+        This page calls the local middleware, which reads KosmikBooker
+        <code>/data</code> and enriches with live <code>/search</code> pricing
+        for the selected dates.
+      </p>
+    </div>
+
+    <script>
+      const form = document.getElementById("search-form");
+      const results = document.getElementById("results");
+      const metaBar = document.getElementById("meta-bar");
+      const searchBtn = document.getElementById("search-btn");
+      const resultsSource = document.getElementById("results-source");
+
+      function addDays(date, days) {
+        const copy = new Date(date);
+        copy.setDate(copy.getDate() + days);
+        return copy;
+      }
+
+      function formatDateInput(date) {
+        return date.toISOString().slice(0, 10);
+      }
+
+      function formatDisplayDate(value) {
+        if (!value) return "—";
+        const date = new Date(`${value}T00:00:00`);
+        return date.toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function formatTimestamp(value) {
+        if (!value) return "—";
+        return new Date(value).toLocaleString("en-GB", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function formatMoney(value, currency = "EUR") {
+        if (value == null || Number.isNaN(Number(value))) return "—";
+        return new Intl.NumberFormat("en-GB", {
+          style: "currency",
+          currency,
+          maximumFractionDigits: 0,
+        }).format(Number(value));
+      }
+
+      function setDefaultDates() {
+        const pickup = addDays(new Date(), 1);
+        const dropoff = addDays(new Date(), 5);
+        document.getElementById("pickupDate").value = formatDateInput(pickup);
+        document.getElementById("dropoffDate").value = formatDateInput(dropoff);
+      }
+
+      function renderLoading() {
+        results.innerHTML = `
+          <div class="skeleton-grid">
+            ${Array.from({ length: 6 }, () => '<div class="skeleton"></div>').join("")}
+          </div>
+        `;
+      }
+
+      function renderError(message) {
+        metaBar.hidden = true;
+        resultsSource.hidden = true;
+        results.innerHTML = `
+          <div class="panel state-box error">
+            <strong>Could not load live availability</strong>
+            <p>${message}</p>
+          </div>
+        `;
+      }
+
+      function renderVehicle(vehicle) {
+        const available = vehicle.quantityAvailable > 0;
+
+        const specs = [
+          vehicle.category,
+          vehicle.transmission,
+          vehicle.fuel,
+          vehicle.seats ? `${vehicle.seats} seats` : null,
+        ].filter(Boolean);
+
+        return `
+          <article class="panel vehicle-card ${available ? "" : "unavailable-card"}">
+            <div class="vehicle-top">
+              <div>
+                <h3 class="vehicle-name">${vehicle.vehicleName}</h3>
+                <div class="vehicle-meta">${vehicle.acrissGroup ? `Group ${vehicle.acrissGroup}` : "Rental vehicle"}</div>
+              </div>
+              <span class="badge ${available ? "ok" : "no"}">
+                ${available ? `${vehicle.quantityAvailable} available` : "Unavailable"}
+              </span>
+            </div>
+
+            <div class="specs">
+              <span class="badge code">${vehicle.vehicleClassCode}</span>
+              ${specs.map((spec) => `<span class="spec">${spec}</span>`).join("")}
+            </div>
+
+            <div class="pricing">
+              <div>
+                <div class="price-main">
+                  ${formatMoney(vehicle.dailyRate, vehicle.currency)}
+                  <span>/ day</span>
+                </div>
+              </div>
+              <div class="price-total">
+                Total stay
+                <strong>${formatMoney(vehicle.totalRate, vehicle.currency)}</strong>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderResults(payload) {
+        const fleet = Array.isArray(payload.fleet) ? payload.fleet : [];
+        const availableFleet = fleet.filter((item) => item.quantityAvailable > 0);
+        const unavailableFleet = fleet.filter((item) => item.quantityAvailable <= 0);
+        const totalUnits = availableFleet.reduce(
+          (sum, item) => sum + item.quantityAvailable,
+          0,
+        );
+
+        metaBar.hidden = false;
+        document.getElementById("stat-available").textContent = String(
+          availableFleet.length,
+        );
+        document.getElementById("stat-available-sub").textContent =
+          `${totalUnits} total unit${totalUnits === 1 ? "" : "s"} ready to book`;
+        document.getElementById("stat-unavailable").textContent = String(
+          unavailableFleet.length,
+        );
+        document.getElementById("stat-location").textContent = payload.locationCode || "JNX";
+        document.getElementById("stat-period").textContent = `${formatDisplayDate(payload.rentalPeriod?.pickupDate)} → ${formatDisplayDate(payload.rentalPeriod?.dropoffDate)}`;
+        document.getElementById("stat-times").textContent = `${payload.rentalPeriod?.pickupTime || "10:00"} pickup · ${payload.rentalPeriod?.dropoffTime || "10:00"} return`;
+        document.getElementById("stat-updated").textContent = formatTimestamp(payload.timestamp);
+        document.getElementById("stat-source").textContent = payload.meta?.source || "middleware";
+
+        resultsSource.hidden = false;
+        resultsSource.textContent = payload.meta?.source || "live search";
+
+        if (fleet.length === 0) {
+          results.innerHTML = `
+            <div class="panel state-box">
+              No vehicles returned for this date range.
+            </div>
+          `;
+          return;
+        }
+
+        const sortedFleet = [...fleet].sort((a, b) => {
+          if (a.quantityAvailable > 0 && b.quantityAvailable <= 0) return -1;
+          if (a.quantityAvailable <= 0 && b.quantityAvailable > 0) return 1;
+          return a.vehicleName.localeCompare(b.vehicleName);
+        });
+
+        results.innerHTML = `<div class="grid">${sortedFleet.map(renderVehicle).join("")}</div>`;
+      }
+
+      async function searchAvailability(formData) {
+        const params = new URLSearchParams({
+          pickupDate: formData.get("pickupDate"),
+          dropoffDate: formData.get("dropoffDate"),
+          pickupTime: formData.get("pickupTime"),
+          dropoffTime: formData.get("dropoffTime"),
+          includeUnavailable: "true",
+        });
+
+        const response = await fetch(`/api/availability?${params.toString()}`);
+        const payload = await response.json();
+
+        if (!response.ok || payload.status === "error") {
+          throw new Error(payload.error?.message || `Request failed with HTTP ${response.status}`);
+        }
+
+        return payload;
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        formData.set("pickupDate", document.getElementById("pickupDate").value);
+        formData.set("dropoffDate", document.getElementById("dropoffDate").value);
+        formData.set("pickupTime", document.getElementById("pickupTime").value);
+        formData.set("dropoffTime", document.getElementById("dropoffTime").value);
+
+        searchBtn.disabled = true;
+        searchBtn.textContent = "Searching…";
+        renderLoading();
+
+        try {
+          const payload = await searchAvailability(formData);
+          renderResults(payload);
+        } catch (error) {
+          renderError(error.message);
+        } finally {
+          searchBtn.disabled = false;
+          searchBtn.textContent = "Search live fleet";
+        }
+      });
+
+      setDefaultDates();
+      form.requestSubmit();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "fmr-discover-cars-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Middleware API bridging KosmikBooker inventory to Discover Cars",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vercel dev --listen 3001 --yes",
+    "demo": "vercel dev --listen 3001 --yes"
+  }
+}
